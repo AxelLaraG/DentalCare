@@ -13,5 +13,14 @@ Las librerías ya instaladas serán visibles en el archivo *requirements.txt*. S
 4. Guardar las nuevas librerías en el *txt* con:
    ```pip freeze > requirements.txt```
 
-Cada persona ya tiene su rama creada, favor de verificar que cada persona esté trabajando en su rama. Si hay 2 personas trabajando en la misma rama, al hacer *commit* el proyecto puede **explotar**.
+Si necesitan crear más carpetas, hacerlo sin problema.
 
+Cada persona ya tiene su rama creada, favor de verificar que cada persona esté trabajando en su rama. Si hay 2 personas trabajando en la misma rama, al hacer *commit* el proyecto puede **explotar**. 
+
+**Verificar que el commit se haga en su rama**
+
+Miembro 1: Login y gestión de usuarios (CRUD).
+Miembro 2: Gestión de dentistas (CRUD).
+Miembro 3: Gestión de pacientes y citas.
+Miembro 4: Elaboración y actualización de expedientes.
+Miembro 5: Integración, menú principal y validaciones generales.
