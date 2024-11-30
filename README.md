@@ -20,7 +20,11 @@ Cada persona ya tiene su rama creada, favor de verificar que cada persona esté 
 **Verificar que el commit se haga en su rama**
 
 Miembro 1: Login y gestión de usuarios (CRUD).
+
 Miembro 2: Gestión de dentistas (CRUD).
+
 Miembro 3: Gestión de pacientes y citas.
+
 Miembro 4: Elaboración y actualización de expedientes.
+
 Miembro 5: Integración, menú principal y validaciones generales.
