@@ -40,6 +40,16 @@ class SemanaApp(QMainWindow):
             database="clinica"
         )
     
+    def habilitarPanelDetalles(self, habilitar=True):
+        self.comboBoxPaciente.setEnabled(habilitar)
+        self.lineEditMotivo.setEnabled(habilitar)
+        self.dateEditFecha.setEnabled(habilitar)
+        self.timeEditHora.setEnabled(habilitar)
+        self.comboBoxEstado.setEnabled(habilitar)
+        self.comboBoxDentista.setEnabled(habilitar)
+        self.btnGuardarCita.setEnabled(habilitar)
+        self.btnEliminarCita.setEnabled(habilitar)
+
     def cargarPacientes(self):
         try:
             conn = self.conectar_db()
@@ -205,10 +215,6 @@ class SemanaApp(QMainWindow):
             item.setTextAlignment(Qt.AlignCenter)
 
     def mostrarDetallesCita(self, fila, columna):
-        clave_celda = (fila, columna)
-        self.citas_actuales = self.citas_por_celda.get(clave_celda, [])
-        self.indice_cita_actual = 0
-
         # Calcular fecha y hora de la celda seleccionada
         fecha = self.inicio_semana + timedelta(days=columna)
         horas = [
@@ -218,16 +224,35 @@ class SemanaApp(QMainWindow):
         ]
         hora = datetime.strptime(horas[fila], "%H:%M:%S").time()
 
-        # Actualizar dentistas disponibles
-        self.cargarDentistasDisponibles(fecha, hora)
+        # Asignar la fecha y hora seleccionadas al panel de detalles
+        self.dateEditFecha.setDate(fecha)
+        self.timeEditHora.setTime(hora)
+
+        # Comparar con la fecha y hora actual para habilitar o deshabilitar el panel
+        fecha_hora_actual = datetime.now()
+        fecha_hora_seleccionada = datetime.combine(fecha, hora)
+
+        if fecha_hora_seleccionada < fecha_hora_actual:
+            self.habilitarPanelDetalles(False)
+        else:
+            self.habilitarPanelDetalles(True)
+
+        # Identificar las citas asociadas a la celda seleccionada
+        clave_celda = (fila, columna)
+        self.citas_actuales = self.citas_por_celda.get(clave_celda, [])
+        self.indice_cita_actual = 0
 
         if self.citas_actuales:
+            # Actualizar el panel con la primera cita de la celda
             self.actualizarPanelCita(self.citas_actuales[0])
         else:
-            # Limpiar el panel y establecer fecha/hora
-            self.dateEditFecha.setDate(fecha)
-            self.timeEditHora.setTime(hora)
-            self.limpiarPanel()
+            # Si no hay citas, limpiar los campos editables pero mantener la fecha y hora seleccionadas
+            self.comboBoxPaciente.setCurrentIndex(-1)  # No seleccionar ningún paciente
+            self.lineEditMotivo.clear()
+            self.comboBoxEstado.setCurrentIndex(-1)
+            self.comboBoxDentista.clear()
+            self.cargarDentistasDisponibles(fecha, hora)
+
 
     def actualizarPanelCita(self, cita):
         fecha, hora, nombre_paciente, motivo, estado, dentista_asignado = cita

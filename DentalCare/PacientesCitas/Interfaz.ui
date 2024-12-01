@@ -276,6 +276,14 @@
                                                     </property>
                                                 </widget>
                                             </item>
+                                            <item>
+                                                <widget class="QPushButton"
+                                                    name="btnGuardarNuevaCita">
+                                                    <property name="text">
+                                                        <string>Guardar como Nueva Cita</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
                                         </layout>
                                     </item>
                                     <item>
