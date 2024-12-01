@@ -12,6 +12,13 @@ class SemanaApp(QMainWindow):
         ruta_ui = os.path.join(os.path.dirname(__file__), "Interfaz.ui")
         loadUi(ruta_ui, self)
 
+        # Configurar timeEditHora para deshabilitar minutos
+        self.timeEditHora.setDisplayFormat("hh:00")  # Formato de visualización solo para horas
+        self.timeEditHora.setWrapping(False)  # No permitir valores fuera del rango
+        self.timeEditHora.setTimeRange(time(7, 0), time(19, 0))  # Limitar el rango de horas
+        self.timeEditHora.timeChanged.connect(self.restringirMinutos)  # Conectar al evento de cambio de hora
+
+        
         # Ajustar el tamaño de las celdas y encabezados
         self.tableWidgetSemana.horizontalHeader().setDefaultSectionSize(120)  # Ancho predeterminado
         self.tableWidgetSemana.verticalHeader().setDefaultSectionSize(30)    # Altura predeterminada
@@ -47,6 +54,12 @@ class SemanaApp(QMainWindow):
             password="",
             database="clinica"
         )
+    
+    def restringirMinutos(self):
+        hora_actual = self.timeEditHora.time()
+        hora_sin_minutos = hora_actual.hour()
+        self.timeEditHora.setTime(time(hora_sin_minutos, 0))  # Ajustar a hora sin minutos
+
     
     def mostrarBotonesCita(self, guardar_visible, eliminar_visible, nueva_cita_visible):
         self.btnGuardarCita.setVisible(guardar_visible)
