@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, date, time
 class SemanaApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        ruta_ui = os.path.join(os.path.dirname(__file__), "Opcion4.ui")
+        ruta_ui = os.path.join(os.path.dirname(__file__), "Interfaz.ui")
         loadUi(ruta_ui, self)
 
         # Ajustar el tamaño de las celdas y encabezados
@@ -19,9 +19,9 @@ class SemanaApp(QMainWindow):
         self.tableWidgetSemana.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
 
         self.inicio_semana = (datetime.now() - timedelta(days=datetime.now().weekday())).date()
-        self.citas_por_celda = {}  # Almacena las citas por celda
-        self.citas_actuales = []  # Almacena las citas de la celda seleccionada
-        self.indice_cita_actual = 0  # Índice de la cita actual mostrada en el panel
+        self.citas_por_celda = {}  
+        self.citas_actuales = []  
+        self.indice_cita_actual = 0  
 
         self.btnSiguiente.clicked.connect(self.mostrarSiguienteSemana)
         self.btnAnterior.clicked.connect(self.mostrarSemanaAnterior)
@@ -30,7 +30,8 @@ class SemanaApp(QMainWindow):
         self.btnSiguienteDetalles.clicked.connect(self.mostrarCitaSiguiente)
 
         self.actualizarFechas()
-
+        self.cargarPacientes() 
+        
     def conectar_db(self):
         return mysql.connector.connect(
             host="localhost",
@@ -38,16 +39,44 @@ class SemanaApp(QMainWindow):
             password="",
             database="clinica"
         )
+    
+    def cargarPacientes(self):
+        try:
+            conn = self.conectar_db()
+            cursor = conn.cursor()
+            query = "SELECT nombre FROM Pacientes"  # Asume que la tabla de pacientes se llama 'Pacientes'
+            cursor.execute(query)
+            pacientes = cursor.fetchall()
+
+            self.comboBoxPaciente.clear()  # Limpia el combo box antes de agregar nuevos elementos
+            self.comboBoxPaciente.addItem("Seleccionar")  # Agregar una opción predeterminada
+
+            for paciente in pacientes:
+                self.comboBoxPaciente.addItem(paciente[0])  # Agregar cada nombre al combo box
+
+            conn.close()
+        except Exception as e:
+            print(f"Error al cargar los pacientes: {e}")
 
     def actualizarFechas(self):
         for i in range(7):  # 7 días de la semana
             fecha = self.inicio_semana + timedelta(days=i)
             self.tableWidgetSemana.setHorizontalHeaderItem(i, QTableWidgetItem(fecha.strftime("%d - %A")))
 
+        # Establecer las horas en el encabezado vertical
+        horas = [
+            "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
+            "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM",
+            "05:00 PM", "06:00 PM", "07:00 PM"
+        ]
+        for i, hora in enumerate(horas):
+            self.tableWidgetSemana.setVerticalHeaderItem(i, QTableWidgetItem(hora))
+
         self.tableWidgetSemana.clearContents()
         self.desactivarCeldasPasadas()
         self.cargarCitas()
         self.mostrarHorasDisponibles()
+
 
     def desactivarCeldasPasadas(self):
         hora_actual = datetime.now().time()
@@ -131,9 +160,6 @@ class SemanaApp(QMainWindow):
             print(f"Error al cargar las citas: {e}")
 
     def actualizarCeldaCita(self, fila, columna, cita):
-        """
-        Actualiza el texto y color de la celda en la tabla para coincidir con la cita seleccionada.
-        """
         nombre_paciente, estado = cita[2], cita[4]
         texto_celda = nombre_paciente
         if len(self.citas_por_celda.get((fila, columna), [])) > 1:
@@ -151,23 +177,45 @@ class SemanaApp(QMainWindow):
             item.setForeground(QBrush(QColor(255, 255, 255)))  # Texto blanco
             item.setTextAlignment(Qt.AlignCenter)
 
-
     def mostrarDetallesCita(self, fila, columna):
         clave_celda = (fila, columna)
         self.citas_actuales = self.citas_por_celda.get(clave_celda, [])
         self.indice_cita_actual = 0
 
-        if self.citas_actuales:
+        if self.citas_actuales:  # Si hay citas en la celda
             self.actualizarPanelCita(self.citas_actuales[0])
             self.actualizarCeldaCita(fila, columna, self.citas_actuales[0])
-        else:
-            self.limpiarPanel()
+        else:  # Si no hay citas, establecer fecha y hora
+            # Calcular la fecha y hora basándose en la celda seleccionada
+            fecha = self.inicio_semana + timedelta(days=columna)
+            horas = [
+                "07:00:00", "08:00:00", "09:00:00", "10:00:00", "11:00:00",
+                "12:00:00", "13:00:00", "14:00:00", "15:00:00", "16:00:00",
+                "17:00:00", "18:00:00", "19:00:00"
+            ]
+            hora = datetime.strptime(horas[fila], "%H:%M:%S").time()
+
+            # Actualizar el panel con la fecha y hora seleccionadas
+            self.dateEditFecha.setDate(fecha)
+            self.timeEditHora.setTime(hora)
+
+            # Limpiar otros campos del panel
+            self.comboBoxPaciente.setCurrentIndex(-1)  # Limpia el combo box de pacientes
+            self.lineEditMotivo.clear()
+            self.comboBoxEstado.setCurrentIndex(-1)
+            self.comboBoxDentista.setCurrentIndex(-1)
+
+
 
     def actualizarPanelCita(self, cita):
         fecha, hora, nombre_paciente, motivo, estado, dentista = cita
         hora_str = (datetime.min + hora).strftime("%H:%M:%S")
 
-        self.lineEditPaciente.setText(nombre_paciente)
+        # Establecer los valores en el panel
+        if nombre_paciente not in [self.comboBoxPaciente.itemText(i) for i in range(self.comboBoxPaciente.count())]:
+            self.comboBoxPaciente.addItem(nombre_paciente)
+        self.comboBoxPaciente.setCurrentText(nombre_paciente)
+
         self.lineEditMotivo.setText(motivo)
         self.dateEditFecha.setDate(fecha)
         self.timeEditHora.setTime(datetime.strptime(hora_str, "%H:%M:%S").time())
@@ -178,13 +226,15 @@ class SemanaApp(QMainWindow):
 
         self.comboBoxDentista.setCurrentText(dentista)
 
+
     def limpiarPanel(self):
-        self.lineEditPaciente.clear()
+        self.comboBoxPaciente.setCurrentIndex(-1)  # No seleccionar ningún paciente
         self.lineEditMotivo.clear()
         self.dateEditFecha.clear()
         self.timeEditHora.clear()
         self.comboBoxEstado.setCurrentIndex(-1)
         self.comboBoxDentista.setCurrentIndex(-1)
+
 
     def mostrarCitaAnterior(self):
         if self.citas_actuales and self.indice_cita_actual > 0:
@@ -203,9 +253,6 @@ class SemanaApp(QMainWindow):
             self.actualizarCeldaCita(fila, columna, cita_actual)
 
     def obtenerCeldaDeCita(self, cita):
-        """
-        Obtiene la fila y columna de la tabla asociada a una cita.
-        """
         fecha, hora = cita[0], cita[1]
         fecha_date = fecha if isinstance(fecha, date) else fecha.date()
         dia_semana = (fecha_date - self.inicio_semana).days
