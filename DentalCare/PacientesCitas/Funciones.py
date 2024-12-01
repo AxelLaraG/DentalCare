@@ -1,7 +1,7 @@
 import os
 import mysql.connector
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QHeaderView,QMessageBox
 from PyQt5.QtGui import QColor, QBrush
 from PyQt5.QtCore import Qt
 from datetime import datetime, timedelta, date, time
@@ -27,8 +27,9 @@ class SemanaApp(QMainWindow):
         self.btnGuardarCita.setVisible(False)
         self.btnEliminarCita.setVisible(False)
         self.btnGuardarNuevaCita.setVisible(False)
-
-
+        
+        self.btnEliminarCita.clicked.connect(self.eliminarCita)
+        self.btnGuardarNuevaCita.clicked.connect(self.guardarNuevaCita)
         self.btnSiguiente.clicked.connect(self.mostrarSiguienteSemana)
         self.btnAnterior.clicked.connect(self.mostrarSemanaAnterior)
         self.tableWidgetSemana.cellClicked.connect(self.mostrarDetallesCita)  # Conectar el evento
@@ -63,6 +64,100 @@ class SemanaApp(QMainWindow):
         self.comboBoxDentista.setEnabled(habilitar)
         self.btnGuardarCita.setEnabled(habilitar)
         self.btnEliminarCita.setEnabled(habilitar)
+
+    def eliminarCita(self):
+        if not self.citas_actuales:
+            return
+
+        respuesta = QMessageBox.question(
+            self,
+            "Confirmar Eliminación",
+            "¿Estás seguro de que deseas eliminar esta cita?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if respuesta == QMessageBox.Yes:
+            cita = self.citas_actuales[self.indice_cita_actual]
+            fecha, hora, id_paciente, motivo, estado, dentista = cita
+
+            try:
+                conn = self.conectar_db()
+                cursor = conn.cursor()
+                
+                query_eliminar = """
+                    UPDATE CitasMedicas
+                    SET estado = 'Cancelada'
+                    WHERE fecha = %s AND hora = %s AND id_dentista = (
+                        SELECT id FROM dentistas WHERE nombre = %s
+                    )
+                """
+                cursor.execute(query_eliminar, (fecha, hora, dentista))
+                conn.commit()
+                conn.close()
+
+                QMessageBox.information(self, "Cita Eliminada", "La cita ha sido eliminada exitosamente.")
+
+                # Actualizar la vista de la tabla después de eliminar la cita
+                self.actualizarFechas()
+
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Ocurrió un error al eliminar la cita: {e}")
+
+
+    def guardarNuevaCita(self):
+        # Obtener los datos del panel de detalles
+        fecha = self.dateEditFecha.date().toPyDate()
+        hora = self.timeEditHora.time().toPyTime()
+        paciente = self.comboBoxPaciente.currentText()
+        dentista = self.comboBoxDentista.currentText()
+        motivo = self.lineEditMotivo.text()
+        estado = self.comboBoxEstado.currentText()
+
+        # Validar que los campos requeridos no estén vacíos
+        if not paciente or not dentista or not motivo or not estado:
+            QMessageBox.warning(self, "Error", "Todos los campos deben estar completos.")
+            return
+
+        try:
+            conn = self.conectar_db()
+            cursor = conn.cursor()
+
+            # Validar si la cita ya existe
+            query_validar = """
+                SELECT COUNT(*)
+                FROM CitasMedicas
+                WHERE fecha = %s AND hora = %s AND id_dentista = (
+                    SELECT id FROM dentistas WHERE nombre = %s
+                ) AND estado != 'Cancelada'
+            """
+            cursor.execute(query_validar, (fecha, hora, dentista))
+            resultado = cursor.fetchone()
+
+            if resultado[0] > 0:
+                QMessageBox.warning(self, "Error", "Ya existe una cita con el mismo dentista, fecha y hora.")
+                conn.close()
+                return
+
+            # Insertar la nueva cita
+            query_insertar = """
+                INSERT INTO CitasMedicas (fecha, hora, id_paciente, id_dentista, motivo, estado)
+                VALUES (
+                    %s, %s,
+                    (SELECT id FROM Pacientes WHERE nombre = %s),
+                    (SELECT id FROM dentistas WHERE nombre = %s),
+                    %s, %s
+                )
+            """
+            cursor.execute(query_insertar, (fecha, hora, paciente, dentista, motivo, estado))
+            conn.commit()
+
+            QMessageBox.information(self, "Éxito", "Cita guardada correctamente.")
+            conn.close()
+
+            # Recargar la tabla de citas
+            self.cargarCitas()
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al guardar la cita: {e}")
 
     def cargarPacientes(self):
         try:
