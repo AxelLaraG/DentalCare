@@ -49,7 +49,6 @@ class SemanaApp(QMainWindow):
             pacientes = cursor.fetchall()
 
             self.comboBoxPaciente.clear()  # Limpia el combo box antes de agregar nuevos elementos
-            self.comboBoxPaciente.addItem("Seleccionar")  # Agregar una opción predeterminada
 
             for paciente in pacientes:
                 self.comboBoxPaciente.addItem(paciente[0])  # Agregar cada nombre al combo box
@@ -57,6 +56,35 @@ class SemanaApp(QMainWindow):
             conn.close()
         except Exception as e:
             print(f"Error al cargar los pacientes: {e}")
+
+    def cargarDentistasDisponibles(self, fecha, hora):
+        try:
+            conn = self.conectar_db()
+            cursor = conn.cursor()
+            
+            # Consulta para obtener los dentistas disponibles
+            query = """
+                SELECT d.nombre
+                FROM dentistas d
+                WHERE d.id NOT IN (
+                    SELECT c.id_dentista
+                    FROM CitasMedicas c
+                    WHERE c.fecha = %s AND c.hora = %s AND c.estado != 'cancelada'
+                )
+            """
+            cursor.execute(query, (fecha, hora))
+            dentistas = cursor.fetchall()
+
+            # Limpieza del combo box
+            self.comboBoxDentista.clear()
+
+            # Agregar dentistas disponibles al combo box
+            for dentista in dentistas:
+                self.comboBoxDentista.addItem(dentista[0])
+
+            conn.close()
+        except Exception as e:
+            print(f"Error al cargar los dentistas disponibles: {e}")
 
     def actualizarFechas(self):
         for i in range(7):  # 7 días de la semana
@@ -76,7 +104,6 @@ class SemanaApp(QMainWindow):
         self.desactivarCeldasPasadas()
         self.cargarCitas()
         self.mostrarHorasDisponibles()
-
 
     def desactivarCeldasPasadas(self):
         hora_actual = datetime.now().time()
@@ -182,33 +209,28 @@ class SemanaApp(QMainWindow):
         self.citas_actuales = self.citas_por_celda.get(clave_celda, [])
         self.indice_cita_actual = 0
 
-        if self.citas_actuales:  # Si hay citas en la celda
-            self.actualizarPanelCita(self.citas_actuales[0])
-            self.actualizarCeldaCita(fila, columna, self.citas_actuales[0])
-        else:  # Si no hay citas, establecer fecha y hora
-            # Calcular la fecha y hora basándose en la celda seleccionada
-            fecha = self.inicio_semana + timedelta(days=columna)
-            horas = [
-                "07:00:00", "08:00:00", "09:00:00", "10:00:00", "11:00:00",
-                "12:00:00", "13:00:00", "14:00:00", "15:00:00", "16:00:00",
-                "17:00:00", "18:00:00", "19:00:00"
-            ]
-            hora = datetime.strptime(horas[fila], "%H:%M:%S").time()
+        # Calcular fecha y hora de la celda seleccionada
+        fecha = self.inicio_semana + timedelta(days=columna)
+        horas = [
+            "07:00:00", "08:00:00", "09:00:00", "10:00:00", "11:00:00",
+            "12:00:00", "13:00:00", "14:00:00", "15:00:00", "16:00:00",
+            "17:00:00", "18:00:00", "19:00:00"
+        ]
+        hora = datetime.strptime(horas[fila], "%H:%M:%S").time()
 
-            # Actualizar el panel con la fecha y hora seleccionadas
+        # Actualizar dentistas disponibles
+        self.cargarDentistasDisponibles(fecha, hora)
+
+        if self.citas_actuales:
+            self.actualizarPanelCita(self.citas_actuales[0])
+        else:
+            # Limpiar el panel y establecer fecha/hora
             self.dateEditFecha.setDate(fecha)
             self.timeEditHora.setTime(hora)
-
-            # Limpiar otros campos del panel
-            self.comboBoxPaciente.setCurrentIndex(-1)  # Limpia el combo box de pacientes
-            self.lineEditMotivo.clear()
-            self.comboBoxEstado.setCurrentIndex(-1)
-            self.comboBoxDentista.setCurrentIndex(-1)
-
-
+            self.limpiarPanel()
 
     def actualizarPanelCita(self, cita):
-        fecha, hora, nombre_paciente, motivo, estado, dentista = cita
+        fecha, hora, nombre_paciente, motivo, estado, dentista_asignado = cita
         hora_str = (datetime.min + hora).strftime("%H:%M:%S")
 
         # Establecer los valores en el panel
@@ -221,11 +243,38 @@ class SemanaApp(QMainWindow):
         self.timeEditHora.setTime(datetime.strptime(hora_str, "%H:%M:%S").time())
         self.comboBoxEstado.setCurrentText(estado.capitalize())
 
-        if dentista not in [self.comboBoxDentista.itemText(i) for i in range(self.comboBoxDentista.count())]:
-            self.comboBoxDentista.addItem(dentista)
+        # Cargar dentistas disponibles para la fecha y hora
+        try:
+            conn = self.conectar_db()
+            cursor = conn.cursor()
+            
+            query = """
+                SELECT d.nombre
+                FROM dentistas d
+                WHERE d.id NOT IN (
+                    SELECT c.id_dentista
+                    FROM CitasMedicas c
+                    WHERE c.fecha = %s AND c.hora = %s AND c.estado != 'cancelada'
+                )
+            """
+            cursor.execute(query, (fecha, hora))
+            dentistas_disponibles = cursor.fetchall()
+            
+            conn.close()
 
-        self.comboBoxDentista.setCurrentText(dentista)
+            # Actualizar el combo box con los dentistas disponibles y el asignado
+            self.comboBoxDentista.clear()
+            
+            for dentista in dentistas_disponibles:
+                self.comboBoxDentista.addItem(dentista[0])
+            
+            # Asegurar que el dentista asignado esté en la lista y seleccionado
+            if dentista_asignado not in [self.comboBoxDentista.itemText(i) for i in range(self.comboBoxDentista.count())]:
+                self.comboBoxDentista.addItem(dentista_asignado)
+            self.comboBoxDentista.setCurrentText(dentista_asignado)
 
+        except Exception as e:
+            print(f"Error al cargar los dentistas disponibles: {e}")
 
     def limpiarPanel(self):
         self.comboBoxPaciente.setCurrentIndex(-1)  # No seleccionar ningún paciente
@@ -234,7 +283,6 @@ class SemanaApp(QMainWindow):
         self.timeEditHora.clear()
         self.comboBoxEstado.setCurrentIndex(-1)
         self.comboBoxDentista.setCurrentIndex(-1)
-
 
     def mostrarCitaAnterior(self):
         if self.citas_actuales and self.indice_cita_actual > 0:
