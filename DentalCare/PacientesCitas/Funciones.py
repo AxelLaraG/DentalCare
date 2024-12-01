@@ -29,6 +29,7 @@ class SemanaApp(QMainWindow):
         self.btnGuardarNuevaCita.setVisible(False)
         
         self.btnEliminarCita.clicked.connect(self.eliminarCita)
+        self.btnGuardarCita.clicked.connect(self.guardarCita)
         self.btnGuardarNuevaCita.clicked.connect(self.guardarNuevaCita)
         self.btnSiguiente.clicked.connect(self.mostrarSiguienteSemana)
         self.btnAnterior.clicked.connect(self.mostrarSemanaAnterior)
@@ -103,6 +104,66 @@ class SemanaApp(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Ocurrió un error al eliminar la cita: {e}")
 
+    def guardarCita(self):
+        if not self.citas_actuales:
+            QMessageBox.warning(self, "Sin Cita Seleccionada", "No hay una cita seleccionada para guardar.")
+            return
+
+        # Obtener los datos actuales del panel de detalles
+        fecha = self.dateEditFecha.date().toPyDate()
+        hora = self.timeEditHora.time().toPyTime()
+        paciente = self.comboBoxPaciente.currentText()
+        motivo = self.lineEditMotivo.text()
+        estado = self.comboBoxEstado.currentText().lower()
+        dentista = self.comboBoxDentista.currentText()
+
+        if not paciente or not motivo or not estado or not dentista:
+            QMessageBox.warning(self, "Campos Vacíos", "Todos los campos deben estar llenos antes de guardar.")
+            return
+
+        # Confirmación de actualización
+        respuesta = QMessageBox.question(
+            self,
+            "Confirmar Guardar",
+            "¿Estás seguro de que deseas guardar los cambios en esta cita?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+
+        if respuesta == QMessageBox.Yes:
+            try:
+                # Obtener los datos de la cita actual seleccionada
+                cita_actual = self.citas_actuales[self.indice_cita_actual]
+                fecha_original, hora_original, nombre_paciente_original, motivo_original, estado_original, dentista_original = cita_actual
+
+                conn = self.conectar_db()
+                cursor = conn.cursor()
+
+                # Actualizar los datos en la base de datos
+                query_actualizar = """
+                    UPDATE CitasMedicas
+                    SET fecha = %s, hora = %s, id_paciente = (
+                        SELECT id FROM Pacientes WHERE nombre = %s
+                    ), motivo = %s, estado = %s, id_dentista = (
+                        SELECT id FROM dentistas WHERE nombre = %s
+                    )
+                    WHERE fecha = %s AND hora = %s AND id_dentista = (
+                        SELECT id FROM dentistas WHERE nombre = %s
+                    )
+                """
+                cursor.execute(query_actualizar, (
+                    fecha, hora, paciente, motivo, estado, dentista,
+                    fecha_original, hora_original, dentista_original
+                ))
+                conn.commit()
+                conn.close()
+
+                QMessageBox.information(self, "Cita Guardada", "Los cambios en la cita se han guardado exitosamente.")
+
+                # Refrescar la vista de la tabla
+                self.actualizarFechas()
+
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Ocurrió un error al guardar los cambios: {e}")
 
     def guardarNuevaCita(self):
         # Obtener los datos del panel de detalles
