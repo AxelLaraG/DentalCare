@@ -23,6 +23,12 @@ class SemanaApp(QMainWindow):
         self.citas_actuales = []  
         self.indice_cita_actual = 0  
 
+        self.btnGuardarNuevaCita.setVisible(False)
+        self.btnGuardarCita.setVisible(False)
+        self.btnEliminarCita.setVisible(False)
+        self.btnGuardarNuevaCita.setVisible(False)
+
+
         self.btnSiguiente.clicked.connect(self.mostrarSiguienteSemana)
         self.btnAnterior.clicked.connect(self.mostrarSemanaAnterior)
         self.tableWidgetSemana.cellClicked.connect(self.mostrarDetallesCita)  # Conectar el evento
@@ -39,6 +45,14 @@ class SemanaApp(QMainWindow):
             password="",
             database="clinica"
         )
+    
+    def mostrarBotonesCita(self, guardar_visible, eliminar_visible, nueva_cita_visible):
+        self.btnGuardarCita.setVisible(guardar_visible)
+        self.btnEliminarCita.setVisible(eliminar_visible)
+        self.btnGuardarNuevaCita.setVisible(nueva_cita_visible)
+
+    def mostrarBotonNuevaCita(self, visible):
+        self.btnGuardarNuevaCita.setVisible(visible)
     
     def habilitarPanelDetalles(self, habilitar=True):
         self.comboBoxPaciente.setEnabled(habilitar)
@@ -243,16 +257,19 @@ class SemanaApp(QMainWindow):
         self.indice_cita_actual = 0
 
         if self.citas_actuales:
-            # Actualizar el panel con la primera cita de la celda
+            # Si hay citas, mostrar botones "Guardar" y "Eliminar", y ocultar "Guardar como Nueva Cita"
+            self.mostrarBotonesCita(guardar_visible=True, eliminar_visible=True, nueva_cita_visible=False)
             self.actualizarPanelCita(self.citas_actuales[0])
         else:
-            # Si no hay citas, limpiar los campos editables pero mantener la fecha y hora seleccionadas
+            # Si no hay citas, ocultar "Guardar" y "Eliminar", y mostrar "Guardar como Nueva Cita"
+            self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
+
+            # Limpiar el panel de detalles, pero mantener la fecha y hora seleccionadas
             self.comboBoxPaciente.setCurrentIndex(-1)  # No seleccionar ningún paciente
             self.lineEditMotivo.clear()
             self.comboBoxEstado.setCurrentIndex(-1)
             self.comboBoxDentista.clear()
             self.cargarDentistasDisponibles(fecha, hora)
-
 
     def actualizarPanelCita(self, cita):
         fecha, hora, nombre_paciente, motivo, estado, dentista_asignado = cita
