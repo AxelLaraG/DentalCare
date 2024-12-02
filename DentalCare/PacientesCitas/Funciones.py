@@ -300,7 +300,11 @@ class SemanaApp(QMainWindow):
         except Exception as e:
             print(f"Error al cargar los dentistas disponibles: {e}")
 
-    def actualizarFechas(self):
+    def actualizarFechas(self, ajustar_inicio=True):
+        if ajustar_inicio:
+            nueva_semana, _ = self.encontrarPrimeraCeldaDisponible()
+            self.inicio_semana = nueva_semana  # Solo ajustar al iniciar o cuando se indique
+
         for i in range(7):  # 7 días de la semana
             fecha = self.inicio_semana + timedelta(days=i)
             self.tableWidgetSemana.setHorizontalHeaderItem(i, QTableWidgetItem(fecha.strftime("%d - %A")))
@@ -318,6 +322,33 @@ class SemanaApp(QMainWindow):
         self.desactivarCeldasPasadas()
         self.cargarCitas()
         self.mostrarHorasDisponibles()
+
+
+    def encontrarPrimeraCeldaDisponible(self):
+        hora_actual = datetime.now().time()
+        fecha_actual = datetime.now().date()
+        semana_inicio = self.inicio_semana  # Usar una copia temporal
+
+        while True:
+            for dia in range(7):  # Días de la semana
+                fecha_celda = semana_inicio + timedelta(days=dia)
+                for hora_index, hora in enumerate([
+                    "07:00:00", "08:00:00", "09:00:00", "10:00:00", "11:00:00",
+                    "12:00:00", "13:00:00", "14:00:00", "15:00:00", "16:00:00",
+                    "17:00:00", "18:00:00", "19:00:00"
+                ]):
+                    hora_celda = datetime.strptime(hora, "%H:%M:%S").time()
+                    item = self.tableWidgetSemana.item(hora_index, dia)
+
+                    # Si la celda está en el futuro y está vacía
+                    if fecha_celda >= fecha_actual and (fecha_celda > fecha_actual or hora_celda > hora_actual):
+                        if item is None or not item.text():
+                            # Retornar la semana y posición encontrada
+                            return semana_inicio, (hora_index, dia)
+
+            # Avanzar una semana si no se encontró ninguna celda disponible
+            semana_inicio += timedelta(weeks=1)
+
 
     def desactivarCeldasPasadas(self):
         hora_actual = datetime.now().time()
@@ -608,11 +639,13 @@ class SemanaApp(QMainWindow):
 
     def mostrarSiguienteSemana(self):
         self.inicio_semana += timedelta(weeks=1)
-        self.actualizarFechas()
+        self.actualizarFechas(ajustar_inicio=False)  # No ajustar la vista inicial
+
 
     def mostrarSemanaAnterior(self):
         self.inicio_semana -= timedelta(weeks=1)
-        self.actualizarFechas()
+        self.actualizarFechas(ajustar_inicio=False)  # No ajustar la vista inicial
+
 
 if __name__ == "__main__":
     app = QApplication([])
