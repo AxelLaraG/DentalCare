@@ -1,348 +1,346 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>SemanaWindow</class>
-    <widget class="QMainWindow" name="SemanaWindow">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>1737</width>
-                <height>550</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>Calendario Semanal</string>
-        </property>
-        <widget class="QWidget" name="centralwidget">
-            <layout class="QVBoxLayout" name="verticalLayout">
-                <item>
-                    <widget class="QLabel" name="labelTitle">
-                        <property name="styleSheet">
-                            <string>
+ <class>SemanaWindow</class>
+ <widget class="QMainWindow" name="SemanaWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1582</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Calendario Semanal</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="labelTitle">
+      <property name="styleSheet">
+       <string>
                                 font-size: 20px; font-weight: bold; color: #274C77;
                             </string>
-                        </property>
-                        <property name="text">
-                            <string>Gestor de Citas</string>
-                        </property>
-                        <property name="alignment">
-                            <set>Qt::AlignCenter</set>
-                        </property>
-                    </widget>
-                </item>
-                <item>
-                    <widget class="QLabel" name="labelHorasDisponibles">
-                        <property name="styleSheet">
-                            <string>
+      </property>
+      <property name="text">
+       <string>Gestor de Citas</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="labelHorasDisponibles">
+      <property name="styleSheet">
+       <string>
                                 font-size: 16px; color: #274C77;
                             </string>
-                        </property>
-                        <property name="text">
-                            <string>Horas disponibles en la semana:</string>
-                        </property>
-                    </widget>
-                </item>
-                <item>
-                    <layout class="QHBoxLayout" name="horizontalLayoutMain" stretch="3,2">
-                        <item>
-                            <layout class="QVBoxLayout" name="verticalLayoutCalendar">
-                                <item>
-                                    <widget class="QTableWidget" name="tableWidgetSemana">
-                                        <property name="styleSheet">
-                                            <string>
+      </property>
+      <property name="text">
+       <string>Horas disponibles en la semana:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayoutMain" stretch="3,2">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayoutCalendar">
+        <item>
+         <widget class="QTableWidget" name="tableWidgetSemana">
+          <property name="styleSheet">
+           <string>
                                                 gridline-color: #62B6B7; background-color: #E3F2F9;
                                             </string>
-                                        </property>
-                                        <property name="verticalScrollBarPolicy">
-                                            <enum>Qt::ScrollBarAlwaysOff</enum>
-                                        </property>
-                                        <property name="horizontalScrollBarPolicy">
-                                            <enum>Qt::ScrollBarAlwaysOff</enum>
-                                        </property>
-                                        <property name="rowCount">
-                                            <number>13</number>
-                                        </property>
-                                        <property name="columnCount">
-                                            <number>7</number>
-                                        </property>
-                                        <property name="horizontalHeaderLabels" stdset="0">
-                                            <stringlist>
-                                                <string>Lunes</string>
-                                                <string>Martes</string>
-                                                <string>Miércoles</string>
-                                                <string>Jueves</string>
-                                                <string>Viernes</string>
-                                                <string>Sábado</string>
-                                                <string>Domingo</string>
-                                            </stringlist>
-                                        </property>
-                                        <property name="verticalHeaderLabels" stdset="0">
-                                            <stringlist>
-                                                <string>7:00 AM</string>
-                                                <string>8:00 AM</string>
-                                                <string>9:00 AM</string>
-                                                <string>10:00 AM</string>
-                                                <string>11:00 AM</string>
-                                                <string>12:00 PM</string>
-                                                <string>1:00 PM</string>
-                                                <string>2:00 PM</string>
-                                                <string>3:00 PM</string>
-                                                <string>4:00 PM</string>
-                                                <string>5:00 PM</string>
-                                                <string>6:00 PM</string>
-                                                <string>7:00 PM</string>
-                                            </stringlist>
-                                        </property>
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <row />
-                                        <column />
-                                        <column />
-                                        <column />
-                                        <column />
-                                        <column />
-                                        <column />
-                                        <column />
-                                    </widget>
-                                </item>
-                                <item>
-                                    <layout class="QHBoxLayout" name="horizontalLayoutButtons">
-                                        <item>
-                                            <widget class="QPushButton" name="btnAnterior">
-                                                <property name="minimumSize">
-                                                    <size>
-                                                        <width>30</width>
-                                                        <height>30</height>
-                                                    </size>
-                                                </property>
-                                                <property name="styleSheet">
-                                                    <string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
+          </property>
+          <property name="rowCount">
+           <number>13</number>
+          </property>
+          <property name="columnCount">
+           <number>7</number>
+          </property>
+          <property name="horizontalHeaderLabels" stdset="0">
+           <stringlist>
+            <string>Lunes</string>
+            <string>Martes</string>
+            <string>Miércoles</string>
+            <string>Jueves</string>
+            <string>Viernes</string>
+            <string>Sábado</string>
+            <string>Domingo</string>
+           </stringlist>
+          </property>
+          <property name="verticalHeaderLabels" stdset="0">
+           <stringlist>
+            <string>7:00 AM</string>
+            <string>8:00 AM</string>
+            <string>9:00 AM</string>
+            <string>10:00 AM</string>
+            <string>11:00 AM</string>
+            <string>12:00 PM</string>
+            <string>1:00 PM</string>
+            <string>2:00 PM</string>
+            <string>3:00 PM</string>
+            <string>4:00 PM</string>
+            <string>5:00 PM</string>
+            <string>6:00 PM</string>
+            <string>7:00 PM</string>
+           </stringlist>
+          </property>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <row/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+          <item>
+           <widget class="QPushButton" name="btnAnterior">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string>
                                                         background-color: #62B6B7; color: #FFFFFF;
                                                         border: 1px solid #274C77; border-radius:
                                                         5px;
                                                     </string>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&lt;</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                        <item>
-                                            <widget class="QPushButton" name="btnSiguiente">
-                                                <property name="minimumSize">
-                                                    <size>
-                                                        <width>30</width>
-                                                        <height>30</height>
-                                                    </size>
-                                                </property>
-                                                <property name="styleSheet">
-                                                    <string>
+            </property>
+            <property name="text">
+             <string>&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnSiguiente">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string>
                                                         background-color: #62B6B7; color: #FFFFFF;
                                                         border: 1px solid #274C77; border-radius:
                                                         5px;
                                                     </string>
-                                                </property>
-                                                <property name="text">
-                                                    <string>&gt;</string>
-                                                </property>
-                                            </widget>
-                                        </item>
-                                    </layout>
-                                </item>
-                            </layout>
-                        </item>
-                        <item>
-                            <widget class="QGroupBox" name="groupBoxDetallesCita">
-                                <property name="styleSheet">
-                                    <string>
+            </property>
+            <property name="text">
+             <string>&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBoxDetallesCita">
+        <property name="styleSheet">
+         <string>
                                         font-size: 14px; font-weight: bold; color: #274C77; margin:
                                         0px; padding: 0px;
                                     </string>
-                                </property>
-                                <property name="title">
-                                    <string>Detalles de la Cita</string>
-                                </property>
-                                <layout class="QVBoxLayout" name="verticalLayoutDetallesCita">
-                                    <item>
-                                        <layout class="QGridLayout" name="gridLayoutDetallesCita">
-                                            <item row="0" column="0">
-                                                <widget class="QLabel" name="labelPaciente">
-                                                    <property name="text">
-                                                        <string>Paciente:</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item row="0" column="1">
-                                                <widget class="QComboBox" name="comboBoxPaciente" />
-                                            </item>
-                                            <item row="1" column="0">
-                                                <widget class="QLabel" name="labelDentista">
-                                                    <property name="text">
-                                                        <string>Dentista:</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item row="1" column="1">
-                                                <widget class="QComboBox" name="comboBoxDentista">
-                                                    <item>
-                                                        <property name="text">
-                                                            <string>Seleccionar</string>
-                                                        </property>
-                                                    </item>
-                                                </widget>
-                                            </item>
-                                            <item row="2" column="0">
-                                                <widget class="QLabel" name="labelMotivo">
-                                                    <property name="text">
-                                                        <string>Motivo:</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item row="2" column="1">
-                                                <widget class="QLineEdit" name="lineEditMotivo" />
-                                            </item>
-                                            <item row="3" column="0">
-                                                <widget class="QLabel" name="labelFecha">
-                                                    <property name="text">
-                                                        <string>Fecha:</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item row="3" column="1">
-                                                <widget class="QDateEdit" name="dateEditFecha" />
-                                            </item>
-                                            <item row="4" column="0">
-                                                <widget class="QLabel" name="labelHora">
-                                                    <property name="text">
-                                                        <string>Hora:</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item row="4" column="1">
-                                                <widget class="QTimeEdit" name="timeEditHora" />
-                                            </item>
-                                            <item row="5" column="0">
-                                                <widget class="QLabel" name="labelEstado">
-                                                    <property name="text">
-                                                        <string>Estado:</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item row="5" column="1">
-                                                <widget class="QComboBox" name="comboBoxEstado">
-                                                    <item>
-                                                        <property name="text">
-                                                            <string>Pendiente</string>
-                                                        </property>
-                                                    </item>
-                                                    <item>
-                                                        <property name="text">
-                                                            <string>Confirmada</string>
-                                                        </property>
-                                                    </item>
-                                                    <item>
-                                                        <property name="text">
-                                                            <string>Cancelada</string>
-                                                        </property>
-                                                    </item>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                    <item>
-                                        <layout class="QHBoxLayout"
-                                            name="horizontalLayoutDetallesBotones">
-                                            <item>
-                                                <widget class="QPushButton" name="btnGuardarCita">
-                                                    <property name="text">
-                                                        <string>Guardar Cita</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QPushButton" name="btnEliminarCita">
-                                                    <property name="text">
-                                                        <string>Eliminar Cita</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QPushButton"
-                                                    name="btnGuardarNuevaCita">
-                                                    <property name="text">
-                                                        <string>Guardar como Nueva Cita</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                    <item>
-                                        <layout class="QHBoxLayout"
-                                            name="horizontalLayoutDetallesNavegacion">
-                                            <item>
-                                                <widget class="QPushButton"
-                                                    name="btnAnteriorDetalles">
-                                                    <property name="minimumSize">
-                                                        <size>
-                                                            <width>30</width>
-                                                            <height>30</height>
-                                                        </size>
-                                                    </property>
-                                                    <property name="styleSheet">
-                                                        <string>
+        </property>
+        <property name="title">
+         <string>Detalles de la Cita</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayoutDetallesCita">
+         <item>
+          <layout class="QGridLayout" name="gridLayoutDetallesCita">
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelPaciente">
+             <property name="text">
+              <string>Paciente:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="comboBoxPaciente"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelDentista">
+             <property name="text">
+              <string>Dentista:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="comboBoxDentista">
+             <item>
+              <property name="text">
+               <string>Seleccionar</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelMotivo">
+             <property name="text">
+              <string>Motivo:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEditMotivo"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelFecha">
+             <property name="text">
+              <string>Fecha:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDateEdit" name="dateEditFecha"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="labelHora">
+             <property name="text">
+              <string>Hora:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QTimeEdit" name="timeEditHora"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="labelEstado">
+             <property name="text">
+              <string>Estado:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QComboBox" name="comboBoxEstado">
+             <item>
+              <property name="text">
+               <string>Pendiente</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Confirmada</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Cancelada</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutDetallesBotones">
+           <item>
+            <widget class="QPushButton" name="btnGuardarCita">
+             <property name="text">
+              <string>Guardar Cita</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnEliminarCita">
+             <property name="text">
+              <string>Eliminar Cita</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnGuardarNuevaCita">
+             <property name="text">
+              <string>Guardar como Nueva Cita</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutDetallesNavegacion">
+           <item>
+            <widget class="QPushButton" name="btnAnteriorDetalles">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string>
                                                             background-color: #62B6B7; color:
                                                             #FFFFFF;
                                                             border: 1px solid #274C77;
                                                             border-radius: 5px;
                                                         </string>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&lt;</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                            <item>
-                                                <widget class="QPushButton"
-                                                    name="btnSiguienteDetalles">
-                                                    <property name="minimumSize">
-                                                        <size>
-                                                            <width>30</width>
-                                                            <height>30</height>
-                                                        </size>
-                                                    </property>
-                                                    <property name="styleSheet">
-                                                        <string>
+             </property>
+             <property name="text">
+              <string>&lt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnSiguienteDetalles">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string>
                                                             background-color: #62B6B7; color:
                                                             #FFFFFF;
                                                             border: 1px solid #274C77;
                                                             border-radius: 5px;
                                                         </string>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string>&gt;</string>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                </layout>
-                            </widget>
-                        </item>
-                    </layout>
-                </item>
-            </layout>
-        </widget>
-    </widget>
-    <resources />
-    <connections />
+             </property>
+             <property name="text">
+              <string>&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>
