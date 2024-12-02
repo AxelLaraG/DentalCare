@@ -237,12 +237,29 @@ class SemanaApp(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error al guardar la cita: {e}")
 
-    def cargarPacientes(self):
+    def cargarPacientes(self, fecha=None, hora=None):
         try:
             conn = self.conectar_db()
             cursor = conn.cursor()
-            query = "SELECT nombre FROM Pacientes"  # Asume que la tabla de pacientes se llama 'Pacientes'
-            cursor.execute(query)
+
+            # Consulta para obtener los pacientes que no tienen citas ese día y hora
+            query = """
+                SELECT nombre 
+                FROM Pacientes 
+                WHERE id NOT IN (
+                    SELECT id_paciente 
+                    FROM CitasMedicas 
+                    WHERE fecha = %s AND hora = %s AND estado != 'Cancelada'
+                )
+            """
+            # Usar fecha y hora actuales si no se proporcionan
+            if not fecha:
+                fecha = self.dateEditFecha.date().toPyDate()
+            if not hora:
+                hora = self.timeEditHora.time().toPyTime()
+
+            # Ejecutar la consulta con fecha y hora como parámetros
+            cursor.execute(query, (fecha, hora))
             pacientes = cursor.fetchall()
 
             # Preserva la opción "Seleccionar" en el ComboBox
@@ -386,7 +403,6 @@ class SemanaApp(QMainWindow):
             conn.close()
         except Exception as e:
             print(f"Error al cargar las citas: {e}")
-
 
     def actualizarCeldaCita(self, fila, columna, cita):
         nombre_paciente, estado = cita[2], cita[4]
