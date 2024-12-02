@@ -347,10 +347,14 @@ class SemanaApp(QMainWindow):
                 if estado.lower() == "cancelada":
                     continue
 
+                # Asegurar que 'hora' sea del tipo datetime.time
+                if isinstance(hora, timedelta):
+                    hora = (datetime.min + hora).time()
+
                 fecha_date = fecha if isinstance(fecha, date) else fecha.date()
                 dia_semana = (fecha_date - self.inicio_semana).days
 
-                hora_str = (datetime.min + hora).strftime("%H:%M:%S")
+                hora_str = hora.strftime("%H:%M:%S")
                 hora_index = self.hora_a_indice(hora_str)
 
                 if 0 <= dia_semana < 7 and 0 <= hora_index < 13:
@@ -438,11 +442,9 @@ class SemanaApp(QMainWindow):
             self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
 
             # Limpiar el panel de detalles
-            self.inicializarComboBox(self.comboBoxPaciente)  # Asegura que "Seleccionar" esté al inicio
-            self.cargarPacientes()  # Recargar los pacientes después de limpiar
-            self.lineEditMotivo.clear()
-            self.comboBoxEstado.setCurrentIndex(-1)
-            self.comboBoxDentista.clear()
+            self.limpiarPanel()
+            self.dateEditFecha.setDate(fecha)
+            self.timeEditHora.setTime(hora)
             self.cargarDentistasDisponibles(fecha, hora)
 
     def actualizarPanelCita(self, cita):
@@ -498,25 +500,43 @@ class SemanaApp(QMainWindow):
         self.inicializarComboBox(self.comboBoxDentista)
         self.comboBoxEstado.setCurrentIndex(-1)  # Seleccionar ningún estado
         self.lineEditMotivo.clear()
-        self.dateEditFecha.clear()
-        self.timeEditHora.clear()
-
+        # No limpiar la fecha y hora para mantenerlas
 
     def mostrarCitaAnterior(self):
         if self.citas_actuales and self.indice_cita_actual > 0:
+            # Retroceder a la cita anterior
             self.indice_cita_actual -= 1
             cita_actual = self.citas_actuales[self.indice_cita_actual]
             self.actualizarPanelCita(cita_actual)
-            fila, columna = self.obtenerCeldaDeCita(cita_actual)
-            self.actualizarCeldaCita(fila, columna, cita_actual)
+            self.mostrarBotonesCita(guardar_visible=True, eliminar_visible=True, nueva_cita_visible=False)
+        else:
+            QMessageBox.information(self, "Aviso", "No hay citas anteriores.")
 
     def mostrarCitaSiguiente(self):
         if self.citas_actuales and self.indice_cita_actual < len(self.citas_actuales) - 1:
+            # Avanzar a la siguiente cita
             self.indice_cita_actual += 1
             cita_actual = self.citas_actuales[self.indice_cita_actual]
             self.actualizarPanelCita(cita_actual)
-            fila, columna = self.obtenerCeldaDeCita(cita_actual)
-            self.actualizarCeldaCita(fila, columna, cita_actual)
+        else:
+            # No hay más citas en el día; mostrar panel vacío para nueva cita
+            self.limpiarPanel()
+            self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
+            self.habilitarPanelDetalles(True)  # Habilitar campos para la nueva cita
+
+            # Mantener la fecha y hora de la celda seleccionada
+            fecha = self.dateEditFecha.date().toPyDate()
+            hora = self.timeEditHora.time().toPyTime()
+
+            # Validar el tipo de hora
+            if isinstance(hora, timedelta):
+                hora = (datetime.min + hora).time()  # Convertir timedelta a time
+
+            self.dateEditFecha.setDate(fecha)
+            self.timeEditHora.setTime(hora)
+
+            # Cargar dentistas disponibles para el horario seleccionado
+            self.cargarDentistasDisponibles(fecha, hora)
 
     def obtenerCeldaDeCita(self, cita):
         fecha, hora = cita[0], cita[1]
