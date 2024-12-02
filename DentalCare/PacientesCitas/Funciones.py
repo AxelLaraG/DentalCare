@@ -347,7 +347,7 @@ class SemanaApp(QMainWindow):
                 if estado.lower() == "cancelada":
                     continue
 
-                # Asegurar que 'hora' sea del tipo datetime.time
+                # Convertir hora a datetime.time si es timedelta
                 if isinstance(hora, timedelta):
                     hora = (datetime.min + hora).time()
 
@@ -387,6 +387,7 @@ class SemanaApp(QMainWindow):
         except Exception as e:
             print(f"Error al cargar las citas: {e}")
 
+
     def actualizarCeldaCita(self, fila, columna, cita):
         nombre_paciente, estado = cita[2], cita[4]
         texto_celda = nombre_paciente
@@ -419,14 +420,10 @@ class SemanaApp(QMainWindow):
         self.dateEditFecha.setDate(fecha)
         self.timeEditHora.setTime(hora)
 
-        # Comparar con la fecha y hora actual para habilitar o deshabilitar el panel
+        # Comparar con la fecha y hora actual para habilitar o deshabilitar creación de nuevas citas
         fecha_hora_actual = datetime.now()
         fecha_hora_seleccionada = datetime.combine(fecha, hora)
-
-        if fecha_hora_seleccionada < fecha_hora_actual:
-            self.habilitarPanelDetalles(False)
-        else:
-            self.habilitarPanelDetalles(True)
+        es_futuro = fecha_hora_seleccionada >= fecha_hora_actual
 
         # Identificar las citas asociadas a la celda seleccionada
         clave_celda = (fila, columna)
@@ -434,18 +431,22 @@ class SemanaApp(QMainWindow):
         self.indice_cita_actual = 0
 
         if self.citas_actuales:
-            # Si hay citas, mostrar botones "Guardar" y "Eliminar", y ocultar "Guardar como Nueva Cita"
-            self.mostrarBotonesCita(guardar_visible=True, eliminar_visible=True, nueva_cita_visible=False)
+            # Si hay citas, mostrar los detalles de la primera cita
+            self.mostrarBotonesCita(guardar_visible=es_futuro, eliminar_visible=es_futuro, nueva_cita_visible=False)
             self.actualizarPanelCita(self.citas_actuales[0])
+            self.habilitarPanelDetalles(es_futuro)  # Permitir edición solo si es futuro
         else:
-            # Si no hay citas, ocultar "Guardar" y "Eliminar", y mostrar "Guardar como Nueva Cita"
-            self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
-
-            # Limpiar el panel de detalles
-            self.limpiarPanel()
-            self.dateEditFecha.setDate(fecha)
-            self.timeEditHora.setTime(hora)
-            self.cargarDentistasDisponibles(fecha, hora)
+            # Si no hay citas, permitir crear nuevas citas solo en horarios futuros
+            if es_futuro:
+                self.limpiarPanel()
+                self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
+                self.habilitarPanelDetalles(True)
+                self.cargarDentistasDisponibles(fecha, hora)
+            else:
+                # Mostrar panel vacío pero deshabilitar creación
+                self.limpiarPanel()
+                self.habilitarPanelDetalles(False)  # Deshabilitar la funcionalidad
+                self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=False)
 
     def actualizarPanelCita(self, cita):
         fecha, hora, nombre_paciente, motivo, estado, dentista_asignado = cita
@@ -517,26 +518,36 @@ class SemanaApp(QMainWindow):
             # Avanzar a la siguiente cita
             self.indice_cita_actual += 1
             cita_actual = self.citas_actuales[self.indice_cita_actual]
-            self.actualizarPanelCita(cita_actual)
-        else:
-            # No hay más citas en el día; mostrar panel vacío para nueva cita
-            self.limpiarPanel()
-            self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
-            self.habilitarPanelDetalles(True)  # Habilitar campos para la nueva cita
 
-            # Mantener la fecha y hora de la celda seleccionada
+            # Convertir hora a datetime.time si es timedelta
+            hora = cita_actual[1]
+            if isinstance(hora, timedelta):
+                hora = (datetime.min + hora).time()
+
+            fecha_hora_cita = datetime.combine(cita_actual[0], hora)
+            fecha_hora_actual = datetime.now()
+            es_futuro = fecha_hora_cita >= fecha_hora_actual
+
+            self.actualizarPanelCita(cita_actual)
+            self.mostrarBotonesCita(guardar_visible=es_futuro, eliminar_visible=es_futuro, nueva_cita_visible=False)
+            self.habilitarPanelDetalles(es_futuro)  # Permitir edición solo si es futuro
+        else:
+            # No hay más citas, verificar si se puede mostrar el panel vacío
             fecha = self.dateEditFecha.date().toPyDate()
             hora = self.timeEditHora.time().toPyTime()
 
-            # Validar el tipo de hora
-            if isinstance(hora, timedelta):
-                hora = (datetime.min + hora).time()  # Convertir timedelta a time
+            # Validar si la fecha y hora son futuras
+            fecha_hora_actual = datetime.now()
+            fecha_hora_seleccionada = datetime.combine(fecha, hora)
 
-            self.dateEditFecha.setDate(fecha)
-            self.timeEditHora.setTime(hora)
-
-            # Cargar dentistas disponibles para el horario seleccionado
-            self.cargarDentistasDisponibles(fecha, hora)
+            if fecha_hora_seleccionada >= fecha_hora_actual:
+                # Mostrar panel vacío para nueva cita
+                self.limpiarPanel()
+                self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
+                self.habilitarPanelDetalles(True)  # Habilitar campos para la nueva cita
+                self.cargarDentistasDisponibles(fecha, hora)
+            else:
+                QMessageBox.information(self, "Aviso", "No puedes agregar nuevas citas en horarios pasados.")
 
     def obtenerCeldaDeCita(self, cita):
         fecha, hora = cita[0], cita[1]
