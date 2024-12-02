@@ -323,7 +323,6 @@ class SemanaApp(QMainWindow):
         self.cargarCitas()
         self.mostrarHorasDisponibles()
 
-
     def encontrarPrimeraCeldaDisponible(self):
         hora_actual = datetime.now().time()
         fecha_actual = datetime.now().date()
@@ -348,7 +347,6 @@ class SemanaApp(QMainWindow):
 
             # Avanzar una semana si no se encontró ninguna celda disponible
             semana_inicio += timedelta(weeks=1)
-
 
     def desactivarCeldasPasadas(self):
         hora_actual = datetime.now().time()
@@ -442,16 +440,19 @@ class SemanaApp(QMainWindow):
             texto_celda += f" +{len(self.citas_por_celda[(fila, columna)]) - 1}"
 
         item = self.tableWidgetSemana.item(fila, columna)
-        if item:
-            item.setText(texto_celda)
+        if not item:
+            item = QTableWidgetItem()
+            self.tableWidgetSemana.setItem(fila, columna, item)
 
-            # Actualizar color según el estado
-            if estado.lower() == "pendiente":
-                item.setBackground(QBrush(QColor(255, 140, 0)))  # Naranja oscuro
-            elif estado.lower() == "confirmada":
-                item.setBackground(QBrush(QColor(0, 102, 204)))  # Azul oscuro
-            item.setForeground(QBrush(QColor(255, 255, 255)))  # Texto blanco
-            item.setTextAlignment(Qt.AlignCenter)
+        item.setText(texto_celda)
+
+        # Actualizar color según el estado
+        if estado.lower() == "pendiente":
+            item.setBackground(QBrush(QColor(255, 140, 0)))  # Naranja oscuro
+        elif estado.lower() == "confirmada":
+            item.setBackground(QBrush(QColor(0, 102, 204)))  # Azul oscuro
+        item.setForeground(QBrush(QColor(255, 255, 255)))  # Texto blanco
+        item.setTextAlignment(Qt.AlignCenter)
 
     def mostrarDetallesCita(self, fila, columna):
         # Calcular fecha y hora de la celda seleccionada
@@ -482,6 +483,7 @@ class SemanaApp(QMainWindow):
             self.mostrarBotonesCita(guardar_visible=es_futuro, eliminar_visible=es_futuro, nueva_cita_visible=False)
             self.actualizarPanelCita(self.citas_actuales[0])
             self.habilitarPanelDetalles(es_futuro)  # Permitir edición solo si es futuro
+            self.actualizarCeldaCita(fila, columna, self.citas_actuales[0])  # Sincronizar con la tabla
         else:
             # Si no hay citas, permitir crear nuevas citas solo en horarios futuros
             if es_futuro:
@@ -556,6 +558,7 @@ class SemanaApp(QMainWindow):
             self.indice_cita_actual -= 1
             cita_actual = self.citas_actuales[self.indice_cita_actual]
             self.actualizarPanelCita(cita_actual)
+            self.actualizarCeldaCita(self.obtenerCeldaDeCita(cita_actual)[0], self.obtenerCeldaDeCita(cita_actual)[1], cita_actual)
             self.mostrarBotonesCita(guardar_visible=True, eliminar_visible=True, nueva_cita_visible=False)
         else:
             QMessageBox.information(self, "Aviso", "No hay citas anteriores.")
@@ -578,6 +581,9 @@ class SemanaApp(QMainWindow):
             self.actualizarPanelCita(cita_actual)
             self.mostrarBotonesCita(guardar_visible=es_futuro, eliminar_visible=es_futuro, nueva_cita_visible=False)
             self.habilitarPanelDetalles(es_futuro)  # Permitir edición solo si es futuro
+
+            # Actualizar la celda en la tabla para reflejar la cita actual mostrada
+            self.actualizarCeldaCita(self.obtenerCeldaDeCita(cita_actual)[0], self.obtenerCeldaDeCita(cita_actual)[1], cita_actual)
         else:
             # No hay más citas, verificar si se puede mostrar el panel vacío
             fecha = self.dateEditFecha.date().toPyDate()
@@ -641,11 +647,9 @@ class SemanaApp(QMainWindow):
         self.inicio_semana += timedelta(weeks=1)
         self.actualizarFechas(ajustar_inicio=False)  # No ajustar la vista inicial
 
-
     def mostrarSemanaAnterior(self):
         self.inicio_semana -= timedelta(weeks=1)
         self.actualizarFechas(ajustar_inicio=False)  # No ajustar la vista inicial
-
 
 if __name__ == "__main__":
     app = QApplication([])
