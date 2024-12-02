@@ -59,7 +59,10 @@ class SemanaApp(QMainWindow):
         hora_actual = self.timeEditHora.time()
         hora_sin_minutos = hora_actual.hour()
         self.timeEditHora.setTime(time(hora_sin_minutos, 0))  # Ajustar a hora sin minutos
-
+    
+    def inicializarComboBox(self, comboBox):
+        comboBox.clear()  # Limpiar cualquier dato previo
+        comboBox.addItem("Seleccionar")
     
     def mostrarBotonesCita(self, guardar_visible, eliminar_visible, nueva_cita_visible):
         self.btnGuardarCita.setVisible(guardar_visible)
@@ -130,8 +133,9 @@ class SemanaApp(QMainWindow):
         estado = self.comboBoxEstado.currentText().lower()
         dentista = self.comboBoxDentista.currentText()
 
-        if not paciente or not motivo or not estado or not dentista:
-            QMessageBox.warning(self, "Campos Vacíos", "Todos los campos deben estar llenos antes de guardar.")
+        # Validar que los campos no tengan "Seleccionar"
+        if paciente == "Seleccionar" or dentista == "Seleccionar" or not motivo or estado == "seleccionar":
+            QMessageBox.warning(self, "Campos Inválidos", "Todos los campos deben estar completos y válidos.")
             return
 
         # Confirmación de actualización
@@ -187,9 +191,9 @@ class SemanaApp(QMainWindow):
         motivo = self.lineEditMotivo.text()
         estado = self.comboBoxEstado.currentText()
 
-        # Validar que los campos requeridos no estén vacíos
-        if not paciente or not dentista or not motivo or not estado:
-            QMessageBox.warning(self, "Error", "Todos los campos deben estar completos.")
+        # Validar que los campos no tengan "Seleccionar"
+        if paciente == "Seleccionar" or dentista == "Seleccionar" or not motivo or estado == "Seleccionar":
+            QMessageBox.warning(self, "Campos Inválidos", "Todos los campos deben estar completos y válidos.")
             return
 
         try:
@@ -241,7 +245,9 @@ class SemanaApp(QMainWindow):
             cursor.execute(query)
             pacientes = cursor.fetchall()
 
-            self.comboBoxPaciente.clear()  # Limpia el combo box antes de agregar nuevos elementos
+            # Preserva la opción "Seleccionar" en el ComboBox
+            self.comboBoxPaciente.clear()
+            self.comboBoxPaciente.addItem("Seleccionar")
 
             for paciente in pacientes:
                 self.comboBoxPaciente.addItem(paciente[0])  # Agregar cada nombre al combo box
@@ -268,12 +274,10 @@ class SemanaApp(QMainWindow):
             cursor.execute(query, (fecha, hora))
             dentistas = cursor.fetchall()
 
-            # Limpieza del combo box
-            self.comboBoxDentista.clear()
+            self.inicializarComboBox(self.comboBoxDentista)  # Agregar opción "Seleccionar" primero
 
-            # Agregar dentistas disponibles al combo box
             for dentista in dentistas:
-                self.comboBoxDentista.addItem(dentista[0])
+                self.comboBoxDentista.addItem(dentista[0])  # Agregar cada dentista al combo box
 
             conn.close()
         except Exception as e:
@@ -433,8 +437,9 @@ class SemanaApp(QMainWindow):
             # Si no hay citas, ocultar "Guardar" y "Eliminar", y mostrar "Guardar como Nueva Cita"
             self.mostrarBotonesCita(guardar_visible=False, eliminar_visible=False, nueva_cita_visible=True)
 
-            # Limpiar el panel de detalles, pero mantener la fecha y hora seleccionadas
-            self.comboBoxPaciente.setCurrentIndex(-1)  # No seleccionar ningún paciente
+            # Limpiar el panel de detalles
+            self.inicializarComboBox(self.comboBoxPaciente)  # Asegura que "Seleccionar" esté al inicio
+            self.cargarPacientes()  # Recargar los pacientes después de limpiar
             self.lineEditMotivo.clear()
             self.comboBoxEstado.setCurrentIndex(-1)
             self.comboBoxDentista.clear()
@@ -488,12 +493,14 @@ class SemanaApp(QMainWindow):
             print(f"Error al cargar los dentistas disponibles: {e}")
 
     def limpiarPanel(self):
-        self.comboBoxPaciente.setCurrentIndex(-1)  # No seleccionar ningún paciente
+        self.inicializarComboBox(self.comboBoxPaciente)
+        self.cargarPacientes()  # Recargar para mantener los pacientes
+        self.inicializarComboBox(self.comboBoxDentista)
+        self.comboBoxEstado.setCurrentIndex(-1)  # Seleccionar ningún estado
         self.lineEditMotivo.clear()
         self.dateEditFecha.clear()
         self.timeEditHora.clear()
-        self.comboBoxEstado.setCurrentIndex(-1)
-        self.comboBoxDentista.setCurrentIndex(-1)
+
 
     def mostrarCitaAnterior(self):
         if self.citas_actuales and self.indice_cita_actual > 0:
