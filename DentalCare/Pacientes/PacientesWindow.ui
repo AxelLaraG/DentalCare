@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PacientesCRUD</class>
+ <widget class="QMainWindow" name="PacientesCRUD">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width> <!-- Ajuste del ancho -->
+    <height>600</height> <!-- Reducción de la altura -->
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Century Gothic</family>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Gestión de Pacientes</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="mainLayout"> <!-- Layout principal -->
+    <property name="spacing">
+     <number>10</number>
+    </property>
+    <property name="margin">
+     <number>10</number>
+    </property>
+    <item>
+     <layout class="QVBoxLayout" name="headerLayout">
+      <item>
+       <widget class="QLabel" name="label_title">
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="font">
+         <font>
+          <family>Century Gothic</family>
+          <pointsize>20</pointsize> <!-- Tamaño reducido -->
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string>color: #1B4965;</string>
+        </property>
+        <property name="text">
+         <string>Pacientes</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="tableLayout">
+      <item>
+       <widget class="QFrame" name="frame_table">
+        <property name="styleSheet">
+         <string>background-color: #CAE9FF; border-radius: 5px;</string>
+        </property>
+        <layout class="QVBoxLayout" name="frameLayout">
+         <item>
+          <widget class="QTableWidget" name="tableWidget">
+           <property name="font">
+            <font>
+             <family>Century Gothic</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string>background-color: white; border: none;</string>
+           </property>
+           <property name="columnCount">
+            <number>7</number>
+           </property>
+           <column>
+            <property name="text">
+             <string>ID</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Nombre</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Apellido</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Dirección</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Correo</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Teléfono</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Edad</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="formLayout">
+      <property name="horizontalSpacing">
+       <number>10</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>5</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_nombre">
+        <property name="text">
+         <string>Nombre:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_nombre"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_apellidos">
+        <property name="text">
+         <string>Apellidos:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLineEdit" name="lineEdit_apellidos"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_fecha_nacimiento">
+        <property name="text">
+         <string>Fecha de Nacimiento:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDateEdit" name="dateEdit_nacimiento"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_telefono">
+        <property name="text">
+         <string>Teléfono:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLineEdit" name="lineEdit_telefono"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_email">
+        <property name="text">
+         <string>Correo:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_email"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_direccion">
+        <property name="text">
+         <string>Dirección:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLineEdit" name="lineEdit_direccion"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="buttonLayout">
+      <item>
+       <widget class="QPushButton" name="btn_add">
+        <property name="text">
+         <string>Agregar</string>
+        </property>
+        <property name="styleSheet">
+         <string>background-color: #5FA8D3; color: white;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_guardar">
+        <property name="text">
+         <string>Guardar</string>
+        </property>
+        <property name="styleSheet">
+         <string>background-color: #5FA8D3; color: white;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_eliminar">
+        <property name="text">
+         <string>Eliminar</string>
+        </property>
+        <property name="styleSheet">
+         <string>background-color: #FF6B6B; color: white;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar"/>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
