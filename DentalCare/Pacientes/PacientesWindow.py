@@ -43,10 +43,10 @@ class PacientesCRUD(QMainWindow):
             conn = self.conectar_db()
             cursor = conn.cursor()
             query = """
-                SELECT id, nombre, apellido, direccion, correo, telefono, 
-                       TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) AS edad 
-                FROM Pacientes
-            """
+                        SELECT id, nombre, apellido, direccion, correo, telefono, 
+                            fecha_nacimiento 
+                        FROM Pacientes
+                    """
             cursor.execute(query)
             pacientes = cursor.fetchall()
             conn.close()
@@ -122,6 +122,11 @@ class PacientesCRUD(QMainWindow):
             self.lineEdit_direccion.setText(self.tableWidget.item(row, 3).text())
             self.lineEdit_email.setText(self.tableWidget.item(row, 4).text())
             self.lineEdit_telefono.setText(self.tableWidget.item(row, 5).text())
+            
+            # Establecer la fecha de nacimiento
+            fecha_nacimiento_str = self.tableWidget.item(row, 6).text()
+            fecha_nacimiento = datetime.strptime(fecha_nacimiento_str, "%Y-%m-%d").date()
+            self.dateEdit_nacimiento.setDate(fecha_nacimiento)
 
             # Recuperar el ID del paciente para futuras operaciones
             self.paciente_id = int(self.tableWidget.item(row, 0).text())
