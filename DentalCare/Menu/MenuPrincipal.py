@@ -12,8 +12,7 @@ from Expedientes.Funciones import MainWindow as ExpedientesWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, dentista):
-        print(dentista)
+    def __init__(self):
         super(MainWindow, self).__init__()
         # Obtener la ruta absoluta de Login.ui
         ui_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MenuPrincipal.ui")

@@ -7,8 +7,7 @@ from Citas.CitasWindow import SemanaApp
 from Expedientes.Funciones import MainWindow as ExpedientesWindow
 
 class MainWindowDentista(QtWidgets.QMainWindow):
-    def __init__(self, dentista):
-        print(dentista)
+    def __init__(self):
         super(MainWindowDentista, self).__init__()
         ui_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MenuPrincipalDentista.ui")
         loadUi(ui_path, self)
