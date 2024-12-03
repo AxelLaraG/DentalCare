@@ -3,7 +3,8 @@ from PyQt5 import QtWidgets
 from PyQt5.uic import loadUi
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+from Citas.CitasWindow import SemanaApp
+from Expedientes.Funciones import MainWindow as ExpedientesWindow
 
 class MainWindowDentista(QtWidgets.QMainWindow):
     def __init__(self, dentista):
@@ -36,6 +37,8 @@ class MainWindowDentista(QtWidgets.QMainWindow):
 
     def show_window(self, opc):
         if opc == 'Citas':
-            QtWidgets.QMessageBox.information(self, "Opción", "Citas")
+            self.crud_citas_window = SemanaApp()
+            self.crud_citas_window.show()
         elif opc == 'Expedientes':
-            QtWidgets.QMessageBox.information(self, "Opción", "Gestión de expedientes")
+            self.crud_expedientes_window = ExpedientesWindow()
+            self.crud_expedientes_window.show()
