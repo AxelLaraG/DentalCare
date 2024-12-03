@@ -31,7 +31,7 @@
       <rect>
        <x>20</x>
        <y>10</y>
-       <width>251</width>
+       <width>361</width>
        <height>30</height>
       </rect>
      </property>
@@ -43,7 +43,7 @@
       </font>
      </property>
      <property name="text">
-      <string>DentalCare - Usuario</string>
+      <string>DentalCare - Usuario Dentista</string>
      </property>
     </widget>
     <widget class="QPushButton" name="btnLogout">
@@ -75,37 +75,11 @@
     <property name="styleSheet">
      <string notr="true">background-color: #E0F7FF;</string>
     </property>
-    <widget class="QPushButton" name="btnUsers">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>160</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Gestión de Usuarios</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnDentists">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>80</y>
-       <width>160</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Gestión de Dentistas</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="btnAppointments">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>140</y>
+       <y>30</y>
        <width>160</width>
        <height>40</height>
       </rect>
@@ -118,26 +92,13 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>200</y>
+       <y>100</y>
        <width>160</width>
        <height>40</height>
       </rect>
      </property>
      <property name="text">
       <string>Expedientes</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnRecords_2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>260</y>
-       <width>160</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Pacientes</string>
      </property>
     </widget>
    </widget>

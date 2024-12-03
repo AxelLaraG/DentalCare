@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>695</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Expediente del Paciente</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string>
+     background-color: #EAF6F6;
+     border: 1px solid #9ACFD5;
+     border-radius: 10px;
+     padding: 10px;
+    </string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="headerLayout">
+      <item>
+       <widget class="QLabel" name="headerLabel">
+        <property name="styleSheet">
+         <string>
+          color: #3C6478;
+          font-size: 18px;
+          font-weight: bold;
+         </string>
+        </property>
+        <property name="text">
+         <string>Expediente del Paciente</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="subtitleLabel">
+        <property name="styleSheet">
+         <string>
+          color: #3C6478;
+          font-size: 14px;
+         </string>
+        </property>
+        <property name="text">
+         <string>Elaboración y Actualización</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="patientSelectionLayout">
+      <item>
+       <widget class="QComboBox" name="patientComboBox">
+        <property name="styleSheet">
+         <string>
+          background-color: #EAF6F6;
+          border: 1px solid #9ACFD5;
+          border-radius: 5px;
+         </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="addPatientButton">
+        <property name="styleSheet">
+         <string>
+          background-color: #3C6478;
+          color: #FFFFFF;
+          border-radius: 5px;
+          padding: 5px;
+         </string>
+        </property>
+        <property name="text">
+         <string>Añadir nuevo paciente</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QFormLayout" name="patientInfoLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="nameLabel">
+        <property name="text">
+         <string>Nombre:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="nameLineEdit"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lastNameLabel">
+        <property name="text">
+         <string>Apellidos:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lastNameLineEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="dobLabel">
+        <property name="text">
+         <string>Fecha de Nacimiento:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDateEdit" name="dobDateEdit"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="phoneLabel">
+        <property name="text">
+         <string>Teléfono:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="phoneLineEdit"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="emailLabel">
+        <property name="text">
+         <string>Correo:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="emailLineEdit"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="addressLabel">
+        <property name="text">
+         <string>Dirección:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="addressLineEdit"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="treatmentLayout">
+      <item>
+       <widget class="QLabel" name="treatmentLabel">
+        <property name="styleSheet">
+         <string>
+          color: #3C6478;
+          font-size: 14px;
+          font-weight: bold;
+         </string>
+        </property>
+        <property name="text">
+         <string>Tratamientos</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="treatmentNameLayout">
+        <item>
+         <widget class="QLineEdit" name="treatmentNameLineEdit">
+          <property name="styleSheet">
+           <string>
+            background-color: #EAF6F6;
+            border: 1px solid #9ACFD5;
+            border-radius: 5px;
+           </string>
+          </property>
+          <property name="placeholderText">
+           <string>Nombre del Tratamiento</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="treatmentComboBox">
+          <property name="styleSheet">
+           <string>
+            background-color: #C1E1E1;
+            border: 1px solid #9ACFD5;
+            border-radius: 5px;
+           </string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="treatmentDetails">
+        <property name="styleSheet">
+         <string>
+          background-color: #EAF6F6;
+          border: 1px solid #9ACFD5;
+          border-radius: 5px;
+         </string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="buttonLayout">
+      <item>
+       <widget class="QPushButton" name="saveButton">
+        <property name="styleSheet">
+         <string>
+          background-color: #3C6478;
+          color: #FFFFFF;
+          border-radius: 5px;
+          padding: 5px;
+         </string>
+        </property>
+        <property name="text">
+         <string>Guardar cambios</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelButton">
+        <property name="styleSheet">
+         <string>
+          background-color: #3C6478;
+          color: #FFFFFF;
+          border-radius: 5px;
+          padding: 5px;
+         </string>
+        </property>
+        <property name="text">
+         <string>Cancelar</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="deletePatientButton">
+        <property name="styleSheet">
+         <string>
+          background-color: #3C6478;
+          color: #FFFFFF;
+          border-radius: 5px;
+          padding: 5px;
+         </string>
+        </property>
+        <property name="text">
+         <string>Eliminar tratamiento</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

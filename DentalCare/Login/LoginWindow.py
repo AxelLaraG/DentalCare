@@ -6,6 +6,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from Menu.MenuPrincipal import MainWindow
+from Menu.MenuPrincipalDentista import MainWindowDentista
 
 
 class MainApp(QMainWindow):
@@ -100,20 +101,26 @@ class MainApp(QMainWindow):
 
             cursor.execute(query_user, data)
             user = cursor.fetchone()
-
+            dentista = False
             if not user:
+                dentista = True
                 cursor.execute(query_dentist, data)
                 user = cursor.fetchone()
 
             conn.close()
 
             if user:
-                QMessageBox.information(self, "Inicio de Sesión", "Inicio de sesión exitoso.")
+                QMessageBox.information(self, "Inicio de Sesión", "Correo y contraseñas correctos!!")
 
-                # Mostrar la ventana del menú principal
-                self.menu_window = MainWindow()
-                self.menu_window.show()
-                self.close()
+                if dentista:
+                    self.menu_window = MainWindowDentista(email)
+                    self.menu_window.show()
+                    self.close()
+                else:
+                    self.menu_window = MainWindow(dentista)
+                    self.menu_window.show()
+                    self.close()
+                
             else:
                 QMessageBox.warning(self, "Error", "Correo o contraseña incorrectos.")
         except Exception as e:
